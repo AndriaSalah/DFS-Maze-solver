@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Main {
     static Stack<Integer> count = new Stack<>();
-    static int counter;
+    static int counter; // move counter
     static boolean multipath =true ;
     static ArrayList<String> path = new ArrayList<>();
     static ArrayList<String> full_path = new ArrayList<>();
@@ -34,7 +34,7 @@ public class Main {
 
     static Stack<Integer> stack = new Stack<Integer>();
 
-
+// intialize the visited matrix by setting all the nodes to false
     public static void main(String[] args) {
         for (int i = 0; i < visited.length; i++) {
             for (int j = 0; j < visited.length; j++) {
@@ -43,17 +43,19 @@ public class Main {
 
         }
         dir();
+        //prints the shortest path
         for (int i = 0; i <path.size() ; i++) {
             System.out.print("path : ");
             System.out.println(path.get(i) +"");
         }
         System.out.println();
+        // prints the full path
         for (int i = 0; i <full_path.size() ; i++) {
             System.out.print("full path : ");
             System.out.println(full_path.get(i)+"");
         }
     }
-
+  // a function which is used to check if the node is the goal node or not
     public static boolean chckgoal() {
         if (maze[x][y].equals("1")) {
             path.add("goal found at :" + "(" + x + "," + y + ")");
@@ -62,31 +64,34 @@ public class Main {
         }
         return false;
     }
+    // a function that checks if the node is a wall or not
+//    public static boolean checkwall() {
+//        if (maze[x][y].equals("#")) {
+//            System.out.println("(" + x + "," + y + ")" + " is a wall");
+//            return true;
+//        } else return false;
+//    }
 
-    public static boolean checkwall() {
-        if (maze[x][y].equals("#")) {
-            System.out.println("(" + x + "," + y + ")" + " is a wall");
-            return true;
-        } else return false;
-    }
+    // a function that checks if the given node is a wall or not
     public static boolean checkwall(int x , int y) {
         if (maze[x][y].equals("#")) {
             return true;
         } else return false;
     }
 
-
+// movement logic
     public static boolean move(Direction action) {
         switch (action) {
             case UP:
-                if(x-1>0) {
-                    if (!visited[x - 1][y]) {
-                        if (maze[x - 1][y] != "#") {
-                            visited[x][y] = true;
+                // move in the upwards direction
+                if(x-1>0) {// check just so it wont go out of bounds in case of a node that is near one end of the matrix
+                    if (!visited[x - 1][y]) {// checks if the next node is visited before moving
+                        if (maze[x - 1][y] != "#") {// check if the next node is a wall before moving
                             chckmultipath();
-                            x--;
-                            path.add("(" + x + "," + y + ")" + "path up");
-                            full_path.add("(" + x + "," + y + ")" + "path up");
+                            visited[x][y] = true;// if it's not a wall and not visited then it will be set as visited so we won't visit it again
+                            x--;// move up
+                            path.add("(" + x + "," + y + ")" + "path up");// add the current node to the short path
+                            full_path.add("(" + x + "," + y + ")" + "path up");// add the current node to the full path
                             //if (multipath){
                             counter++;
                             //}
@@ -98,6 +103,7 @@ public class Main {
                 }
                 return false;
             case DOWN:
+                // move in the downwards direction
                 if(x+1< maze.length) {
                     if (!visited[x + 1][y]) {
                         if (maze[x + 1][y] != "#") {
@@ -115,6 +121,7 @@ public class Main {
                 return false;
 
             case LEFT:
+                // move in the left direction
                 if(y-1>0) {
                     if (!visited[x][y - 1]) {
                         if (maze[x][y - 1] != "#") {
@@ -134,12 +141,13 @@ public class Main {
                 return false;
 
             case RIGHT:
+                // move in the right direction
                 if (y+1 < maze.length){
                     if (!visited[x][y + 1]){
                         if (maze[x][y + 1] != "#") {
-                            visited[x][y] = true;
+                            visited[x][y] = true; // if it's not a wall and not visited then it will be set as visited so we won't visit it again
                             chckmultipath();
-                            y++;
+                            y++;// moves to the right
                             path.add("(" + x + "," + y + ")" + "path right");
                             full_path.add("(" + x + "," + y + ")" + "path right");
                                 counter ++;
@@ -175,13 +183,13 @@ public class Main {
 
     public static void chckmultipath() {
 
-        if (x - 1 < 0 || x + 1 >= maze.length || y - 1 < 0 || y + 1 >= maze.length) {
+        if (x - 1 < 0 || x + 1 >= maze.length || y - 1 < 0 || y + 1 >= maze.length) {//out of bounds check
             return;
         } else {
             if (!visited[x][y + 1] && !visited[x][y - 1] && !checkwall(x, y + 1) && !checkwall(x, y - 1)) {
                 stack.add(x);
                 stack.add(y);
-                if (multipath) {
+                if (counter > 0) {
                     count.add(counter);
                     counter = 0;
                 }
